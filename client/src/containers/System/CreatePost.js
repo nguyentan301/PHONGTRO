@@ -12,6 +12,7 @@ import { resetDataEdit } from '../../store/actions'
 import { attention } from '../../ultils/constant'
 import { useDebounce } from '../../HOC/useDebounce'
 import Geocode from "react-geocode";
+import Upload from '../../components/comom/Upload'
 Geocode.setApiKey(process.env.REACT_APP_MAP_API);
 Geocode.setLanguage("vi");
 
