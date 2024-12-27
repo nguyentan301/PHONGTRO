@@ -12,7 +12,6 @@ import { resetDataEdit } from '../../store/actions'
 import { attention } from '../../ultils/constant'
 import { useDebounce } from '../../HOC/useDebounce'
 import Geocode from "react-geocode";
-import Upload from '../../components/comom/Upload'
 Geocode.setApiKey(process.env.REACT_APP_MAP_API);
 Geocode.setLanguage("vi");
 
@@ -76,17 +75,25 @@ const CreatePost = ({ isEdit }) => {
         e.stopPropagation()
         setIsLoading(true)
         let images = []
-        let files = e.target.files
+        let files = e.target.files;
         let formData = new FormData()
-        for (let i of files) {
-            formData.append('file', i)
-            formData.append('upload_preset', process.env.REACT_APP_UPLOAD_ASSETS_NAME)
-            let response = await apiUploadImages(formData)
-            if (response.status === 200) images = [...images, response.data?.secure_url]
+        try {
+            for (let i of files) {
+                formData.append('file', i)
+                formData.append('upload_preset', process.env.REACT_APP_UPLOAD_ASSETS_NAME)
+                formData.append('api_key', process.env.REACT_APP_CLOUD_API_KEY)
+                let response = await apiUploadImages(formData)
+                if (response.status === 200) images = [...images, response.data?.secure_url]
+            }
+            
+            setImagesPreview(prev => [...prev, ...images])
+            setPayload(prev => ({ ...prev, images: [...prev.images, ...images] }))
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsLoading(false)
         }
-        setIsLoading(false)
-        setImagesPreview(prev => [...prev, ...images])
-        setPayload(prev => ({ ...prev, images: [...prev.images, ...images] }))
+       
     }
     const handleDeleteImage = (image) => {
         setImagesPreview(prev => prev?.filter(item => item !== image))

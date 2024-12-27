@@ -30,10 +30,14 @@ const Address = ({ setPayload, invalidFields, setInvalidFields }) => {
 
     useEffect(() => {
         const fetchPublicProvince = async () => {
+        try {
             const response = await apiGetPublicProvinces()
             if (response.status === 200) {
                 setProvinces(response?.data.results)
             }
+        } catch (error) {
+            console.error(error)
+        }
         }
         fetchPublicProvince()
     }, [])
